@@ -1,6 +1,10 @@
 package pet.park.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,4 +29,18 @@ public class ParkController {
 		
 		return parkService.saveContributor(contributorData);
 	}
+	
+	@GetMapping("/contributer")
+	public List<ContributorData> retrieveAllContributers(){
+		log.info("Retrieve all contributers called");
+		return parkService.retrieveAllContributors();
+	}
+	
+	// method retrieves single contributor by id
+	@GetMapping("/contributor/{contributorId}") // have to pass in resource id, contributor is a resource, pet.park is application
+			public ContributorData retrieveContributorById(@PathVariable Long contributorId) { // PathVariable tells Spring that we expect that var in the URL, and that goes into 
+		// contributorId param
+				log.info("Retrieving contributor with ID ={}", contributorId);
+				return parkService.retrieveContributorById(contributorId);
+			}
 }
