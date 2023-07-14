@@ -4,8 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,8 @@ public class ParkService {
 	@Transactional(readOnly = false)
 	public ContributorData saveContributor(ContributorData contributorData) {
 		Long contributorId = contributorData.getContributorId();
-		Contributor contributor = findOrCreateContributor(contributorId);
+		Contributor contributor = findOrCreateContributor(contributorId, contributorData.getContributorEmail());
+		
 		setFieldsInContributor(contributor, contributorData);
 		return new ContributorData(contributorDao.save(contributor));
 		// convert contributor obj to contributor data by making constructor
@@ -33,9 +36,19 @@ public class ParkService {
 	contributor.setContributorName(contributorData.getContributorName());
 	}
 
-	private Contributor findOrCreateContributor(Long contributorId) {
+	private Contributor findOrCreateContributor(Long contributorId, String contributorEmail) {
 		Contributor contributor;
+		
 		if (Objects.isNull(contributorId)) {
+			// see if contributor with a certain email exists
+			// custom method to do that
+			// method exists in Contributor Dao, returns a contributor if it finds one
+Optional<Contributor> opContrib= contributorDao.findByContributorEmail(contributorEmail);
+
+// check for duplicate contributor
+if(opContrib.isPresent()) {
+	throw new DuplicateKeyException("Contributor with emaiL: "+contributorEmail+" already exists.");
+}
 			contributor = new Contributor();
 		} else {
 			contributor = findContributorById(contributorId);
@@ -44,6 +57,7 @@ public class ParkService {
 	}
 
 	private Contributor findContributorById(Long contributorId) {
+
 		return contributorDao.findById(contributorId).orElseThrow(
 				() -> new NoSuchElementException("Contributor with Id = " + contributorId + " was not found. "));
 	}
