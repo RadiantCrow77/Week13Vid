@@ -1,8 +1,10 @@
 package pet.park.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,7 @@ public class ParkController {
 		return parkService.saveContributor(contributorData);
 	}
 	
+	// READ contributor
 	@GetMapping("/contributer")
 	public List<ContributorData> retrieveAllContributers(){
 		log.info("Retrieve all contributers called");
@@ -59,4 +62,25 @@ public class ParkController {
 				log.info("Retrieving contributor with ID ={}", contributorId);
 				return parkService.retrieveContributorById(contributorId);
 			}
+	
+	// DELETE all contributors
+	@DeleteMapping("/contributor") // no need to pass an ID as this method deletes ALL contributors
+	public void deleteAllContributors() {
+			log.info("Attempting to delete all contributors ...");
+			throw new UnsupportedOperationException("Deleting all contributors is not allowed.");
+			 
+	}
+	
+	// DELETE one contributor , very similar to READ/GET with an ID
+	@DeleteMapping("/contributor/{contributorId}")
+	public Map<String, String> deleteContributorById(
+			@PathVariable Long contributorId) // Jackson converts this msg to JSON
+	{
+		log.info("Deleting contributor with id = {}", contributorId);
+		
+		parkService.deleteContributorById(contributorId);
+		
+		return Map.of("message", "Deletion of contributor with ID = "+contributorId+" was successful.");
+		
+	}
 }

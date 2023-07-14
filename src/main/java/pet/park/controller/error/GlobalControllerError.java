@@ -31,6 +31,13 @@ private class ExceptionMessage{
 	private String uri;
 }
 
+// this method error handles DELETE all contributor operation
+@ExceptionHandler(UnsupportedOperationException.class)
+@ResponseStatus(code = HttpStatus.METHOD_NOT_ALLOWED)
+public ExceptionMessage handleUnsuportedOperationException(UnsupportedOperationException ex, WebRequest webRequest) {
+	return buildExceptionMessage(ex, HttpStatus.METHOD_NOT_ALLOWED, webRequest,  LogStatus.MESSAGE_ONLY);
+	 // message only = log without a stack trace
+}
 
 @ExceptionHandler(NoSuchElementException.class)
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
@@ -44,6 +51,14 @@ public ExceptionMessage handleNoSuchElementException(NoSuchElementException ex, 
 public ExceptionMessage handleDuplicateKeyException(DuplicateKeyException ex, WebRequest webRequest) {
 	return buildExceptionMessage(ex, HttpStatus.CONFLICT, webRequest, 
 			LogStatus.MESSAGE_ONLY); // exception wanted, err code for dup keys = 409
+}
+
+// returns a 500 server error
+// handler for Exception
+@ExceptionHandler(Exception.class)
+@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+public ExceptionMessage handleException(Exception ex, WebRequest webRequest) {
+	return buildExceptionMessage(ex, HttpStatus.INTERNAL_SERVER_ERROR, webRequest, LogStatus.STACK_TRACE); // this is an unexpected exception, so log stack trace
 }
 
 // method that builds exception msg

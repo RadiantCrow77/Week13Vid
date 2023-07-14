@@ -86,9 +86,16 @@ if(opContrib.isPresent()) {
 		
 	}
 
+	@Transactional(readOnly = true)
 	public ContributorData retrieveContributorById(Long contributorId) {
 	Contributor contributor = findContributorById(contributorId);
 	return new ContributorData(contributor);
+	}
+
+	@Transactional(readOnly = false)
+	public void deleteContributorById(Long contributorId) {
+	Contributor contributor = findContributorById(contributorId); // call findbyId to get contributor, invalid id throws an exception
+	contributorDao.delete(contributor);
 	}
 	
 
