@@ -1,0 +1,13 @@
+{
+"parkName": "Guilty and Reaver's Island Pet Park",
+"directions": "Washington naval shipyard and to the left",
+"stateOrProvince": "WA",
+"country": "USA",
+"geoLocation": {
+"latitude": "47.6080",
+"longitude": "-122.2233"
+},
+"amenities": [
+"dog-friendly", "fenced area", "hot dog stand", "vending machine"
+]
+}

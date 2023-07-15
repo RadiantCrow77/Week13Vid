@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import pet.park.controller.model.ContributorData;
+import pet.park.controller.model.PetParkData;
 import pet.park.service.ParkService;
 
 @RestController // says will return 200 response by default
@@ -81,6 +84,26 @@ public class ParkController {
 		parkService.deleteContributorById(contributorId);
 		
 		return Map.of("message", "Deletion of contributor with ID = "+contributorId+" was successful.");
+	}
+	
+	// start creating Location
+	@PostMapping("/contributor/{contributorId}/park") // crates a park
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public PetParkData insertPetPark(@PathVariable Long contributorId, @RequestBody PetParkData petParkData) {
+		log.info("Creating park {} for contributor with ID = {}", petParkData,  contributorId);
 		
+		// return petpark data obj
+		return parkService.savePetPark(contributorId, petParkData);
+	}
+	
+	// Modify a pet park
+	@PutMapping("/contributor/{contributorId}/park/{parkId}") // give park ID that you want to modify, no response line because we want 200 status
+	public PetParkData updatePetPark(@PathVariable Long contributorId, @PathVariable Long parkId, @RequestBody PetParkData petParkData) {
+		
+		petParkData.setPetParkId(parkId);
+		log.info("Creating park {} for contributor with ID = {}", petParkData,  contributorId);
+		
+		// return petpark data obj
+		return parkService.savePetPark(contributorId, petParkData);
 	}
 }
